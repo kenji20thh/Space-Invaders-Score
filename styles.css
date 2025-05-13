@@ -53,7 +53,7 @@ body {
     position: absolute;
     width: 60px;
     height: 55px;
-    background-image: url('Space-Invaders-ship-cropped.png'); 
+    background-image: url('assets/Space-Invaders-ship-cropped.png'); 
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: center;
@@ -66,7 +66,7 @@ body {
     position: absolute;
     width: 32px;
     height: 24px;
-    background-image: url('alien1.png'); 
+    background-image: url('assets/alien1.png'); 
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: center;
@@ -76,7 +76,7 @@ body {
     position: absolute;
     width: 40px;
     height: 30px;
-    background-image: url('alien2.png'); 
+    background-image: url('assets/alien2.png'); 
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: center;
@@ -86,7 +86,7 @@ body {
     position: absolute;
     width: 40px;
     height: 30px;
-    background-image: url('alien3.png'); 
+    background-image: url('assets/alien3.png'); 
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: center;
@@ -96,7 +96,7 @@ body {
     position: absolute;
     width: 40px;
     height: 30px;
-    background-image: url('alien4.png'); 
+    background-image: url('assets/alien4.png'); 
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: center;
@@ -106,7 +106,7 @@ body {
     position: absolute;
     width: 40px;
     height: 30px;
-    background-image: url('alien5.png'); 
+    background-image: url('assets/alien5.png'); 
     background-size: cover; 
     background-repeat: no-repeat;
     background-position: center;
