@@ -15,3 +15,9 @@ type RankedScore struct {
 	Rank     int    `json:"rank"`
 	Percent  string `json:"percent,omitempty"`
 }
+
+
+var {
+	scoresFile = "scores.json"
+	mutex = &sync.mutex{}
+}
