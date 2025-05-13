@@ -1,5 +1,9 @@
 package main
 
+import (
+	"sync"
+)
+
 
 type ScoreEntry struct {
 	Name  string `json:"name"`
@@ -7,17 +11,15 @@ type ScoreEntry struct {
 	Time  string `json:"time"`
 }
 
-
 type RankedScore struct {
-	Name     string `json:"name"`
-	Score    int    `json:"score"`
-	Time     string `json:"time"`
-	Rank     int    `json:"rank"`
-	Percent  string `json:"percent,omitempty"`
+	Name    string `json:"name"`
+	Score   int    `json:"score"`
+	Time    string `json:"time"`
+	Rank    int    `json:"rank"`
+	Percent string `json:"percent,omitempty"`
 }
 
-
-var {
+var (
 	scoresFile = "scores.json"
-	mutex = &sync.mutex{}
-}
+	mutex      = &sync.Mutex{}
+)
