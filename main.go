@@ -12,15 +12,7 @@ import (
 type ScoreEntry struct {
 	Name  string `json:"name"`
 	Score int    `json:"score"`
-	Time  string `json:"time"`
-}
-
-type RankedScore struct {
-	Name    string `json:"name"`
-	Score   int    `json:"score"`
-	Time    string `json:"time"`
-	Rank    int    `json:"rank"`
-	Percent string `json:"percent,omitempty"`
+	Time  string `json:"time"` // Format: "mm:ss"
 }
 
 var (
@@ -28,30 +20,50 @@ var (
 	mutex      = &sync.Mutex{}
 )
 
-// func main () {
-// 	http.HandleFunc("/score", handlePostScore)
-// 	http.HandleFunc("/scores", handleGetScores)
-// }
+func main() {
+	http.HandleFunc("/score", handlePostScore)
+	http.HandleFunc("/scores", handleGetScores)
+
+	fmt.Println("Server started at http://localhost:8080")
+	http.ListenAndServe(":8080", nil)
+}
 
 func handlePostScore(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
 	var entry ScoreEntry
 	if err := json.NewDecoder(r.Body).Decode(&entry); err != nil {
-		http.Error(w, "Invalid Json", http.StatusBadRequest)
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
+
 	mutex.Lock()
 	defer mutex.Unlock()
 
 	scores := loadScores()
 	scores = append(scores, entry)
-	// saveScores(scores)
+	saveScores(scores)
 
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("Score Saved"))
+	w.Write([]byte("Score saved"))
+}
+
+func handleGetScores(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	scores := loadScores()
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(scores)
 }
 
 func loadScores() []ScoreEntry {
@@ -60,10 +72,15 @@ func loadScores() []ScoreEntry {
 		if os.IsNotExist(err) {
 			return []ScoreEntry{}
 		}
-		fmt.Println("Reading Error", err)
+		fmt.Println("Error reading file:", err)
 		return []ScoreEntry{}
 	}
+
 	var scores []ScoreEntry
-	json.Unmarshal(data, &scores)
+	if err := json.Unmarshal(data, &scores); err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return []ScoreEntry{}
+	}
 	return scores
 }
+
