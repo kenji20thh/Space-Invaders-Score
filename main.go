@@ -89,3 +89,15 @@ func loadScores() []ScoreEntry {
 	}
 	return scores
 }
+
+func saveScores(scores []ScoreEntry) {
+	data, err := json.MarshalIndent(scores, "", "  ")
+	if err != nil {
+		fmt.Println("Error marshaling JSON:", err)
+		return
+	}
+	err = os.WriteFile(scoresFile, data, 0644)
+	if err != nil {
+		fmt.Println("Error writing file:", err)
+	}
+}
