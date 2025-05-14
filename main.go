@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"sync"
@@ -34,8 +34,14 @@ func handlePostScore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Could not read request body", http.StatusBadRequest)
+		return
+	}
+
 	var entry ScoreEntry
-	if err := json.NewDecoder(r.Body).Decode(&entry); err != nil {
+	if err := json.Unmarshal(body, &entry); err != nil {
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
@@ -67,7 +73,7 @@ func handleGetScores(w http.ResponseWriter, r *http.Request) {
 }
 
 func loadScores() []ScoreEntry {
-	data, err := ioutil.ReadFile(scoresFile)
+	data, err := os.ReadFile(scoresFile)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return []ScoreEntry{}
@@ -83,4 +89,3 @@ func loadScores() []ScoreEntry {
 	}
 	return scores
 }
-
