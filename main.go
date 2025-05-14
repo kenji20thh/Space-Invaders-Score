@@ -2,10 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 	"sync"
 )
-
 
 type ScoreEntry struct {
 	Name  string `json:"name"`
@@ -26,8 +28,6 @@ var (
 	mutex      = &sync.Mutex{}
 )
 
-
-
 // func main () {
 // 	http.HandleFunc("/score", handlePostScore)
 // 	http.HandleFunc("/scores", handleGetScores)
@@ -38,7 +38,7 @@ func handlePostScore(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	var entry ScoreEntry 
+	var entry ScoreEntry
 	if err := json.NewDecoder(r.Body).Decode(&entry); err != nil {
 		http.Error(w, "Invalid Json", http.StatusBadRequest)
 		return
@@ -48,6 +48,22 @@ func handlePostScore(w http.ResponseWriter, r *http.Request) {
 
 	scores := loadScores()
 	scores = append(scores, entry)
-	saveScores(scores)
+	// saveScores(scores)
 
-} 
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte("Score Saved"))
+}
+
+func loadScores() []ScoreEntry {
+	data, err := ioutil.ReadFile(scoresFile)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return []ScoreEntry{}
+		}
+		fmt.Println("Reading Error", err)
+		return []ScoreEntry{}
+	}
+	var scores []ScoreEntry
+	json.Unmarshal(data, &scores)
+	return scores
+}
